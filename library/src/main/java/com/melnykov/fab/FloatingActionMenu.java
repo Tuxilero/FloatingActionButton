@@ -57,6 +57,7 @@ public class FloatingActionMenu extends ImageButton implements ObservableScrollV
 	private RelativeLayout mOverlayLayout;
 	private boolean mAnimating = false;
 	private int bottomThreshold = 0;
+	private int mCurrentBottomThreshold = 0;
 
 
 	@IntDef({TYPE_NORMAL, TYPE_MINI})
@@ -493,6 +494,7 @@ public class FloatingActionMenu extends ImageButton implements ObservableScrollV
 
 	public void setBottomOffset(int offset, boolean animate)
 	{
+		mCurrentBottomThreshold = offset;
 		float toastOffset = maxBottomPadding() - offset;
 		toastOffset = (toastOffset<0) ? toastOffset : 0;
 
@@ -554,6 +556,7 @@ public class FloatingActionMenu extends ImageButton implements ObservableScrollV
 	{
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
 		button.setLayoutParams(params);
 		mButtonList.add(button);
@@ -585,7 +588,8 @@ public class FloatingActionMenu extends ImageButton implements ObservableScrollV
 
 		if(mOverlayLayout!=null) mOverlayLayout.setVisibility(VISIBLE);
 
-		setVisibility(GONE);
+
+		// FIXME FOR HORIZONTAL
 		int width = mObservableScrollView.getWidth() - getMarginRight() * 2 - getWidth();
 
 		int position;
@@ -593,12 +597,34 @@ public class FloatingActionMenu extends ImageButton implements ObservableScrollV
 		else position = width / (mButtonList.size() - 1);
 
 		AnimatorSet menuRollup = new AnimatorSet();
+
 		for(int i = 0; i<mButtonList.size(); i++)
 		{
 			ObjectAnimator anim = ObjectAnimator.ofFloat(mButtonList.get(i), "translationX", -position * i);
 			anim.setDuration(TRANSLATE_DURATION_MILLIS);
 			menuRollup.play(anim);
 		}
+		// FIXME FOR HORIZONTAL
+
+		// FIXME FOR VERTICAL
+//		int height = mObservableScrollView.getHeight() - getMarginRight() * 2 - maxBottomPadding().intValue() + mCurrentBottomThreshold - getHeight();
+//
+//		int position;
+//		if(mButtonList.size()==0)
+//			position = 0;
+//		else
+//			position = height / (mButtonList.size() - 1);
+//
+//		AnimatorSet menuRollup = new AnimatorSet();
+//
+//		for(int i = 0; i<mButtonList.size(); i++)
+//		{
+//			ObjectAnimator anim = ObjectAnimator.ofFloat(mButtonList.get(i), "translationY", -position * i);
+//			anim.setDuration(TRANSLATE_DURATION_MILLIS);
+//			menuRollup.play(anim);
+//		}
+		// FIXME FOR VERTICAL
+
 		menuRollup.addListener(new Animator.AnimatorListener()
 		{
 
@@ -642,7 +668,7 @@ public class FloatingActionMenu extends ImageButton implements ObservableScrollV
 		AnimatorSet bouncer = new AnimatorSet();
 		for(FloatingActionButton button : mButtonList)
 		{
-			ObjectAnimator anim = ObjectAnimator.ofFloat(button, "translationX", 0);
+			ObjectAnimator anim = ObjectAnimator.ofFloat(button, "translationY", 0);
 			anim.setDuration(TRANSLATE_DURATION_MILLIS);
 			bouncer.play(anim);
 		}

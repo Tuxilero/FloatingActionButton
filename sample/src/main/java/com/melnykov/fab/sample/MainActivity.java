@@ -33,11 +33,11 @@ public class MainActivity extends Activity
 
 		if(mFAB==null) mFAB = (FloatingActionMenu) findViewById(R.id.fab);
 
-		ListView listView = new ListView(this);
-		ListAdapter listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.planets));
-		listView.setAdapter(listAdapter);
+//		ListView listView = new ListView(this);
+//		ListAdapter listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.planets));
+//		listView.setAdapter(listAdapter);
 
-		scrollView.addView(listView);
+//		scrollView.addView(listView);
 
 		fabInit();
 
@@ -47,13 +47,14 @@ public class MainActivity extends Activity
 
 	private void fabInit()
 	{
-		final RelativeLayout menuLayout = (RelativeLayout) findViewById(R.id.fab_menu_layout);
+		final RelativeLayout menuLayout = (RelativeLayout) findViewById(R.id.fab_menu_layout); // horizontal
+//		final RelativeLayout menuLayout = (RelativeLayout) findViewById(R.id.fab_menu_layout_top); // vertical
 		final RelativeLayout overlayLayout = (RelativeLayout) findViewById(R.id.fab_hide_overlay);
 
 		if(FAB_AS_BUTTON)
 		{
 			mFAB.setLayout(menuLayout);
-			mFAB.setImageDrawable(getResources().getDrawable(R.drawable.selector_fab_button_main));
+			mFAB.setImageDrawable(getResources().getDrawable(R.drawable.btn_main));
 
 			mFAB.setOnClickListener(new View.OnClickListener()
 			{
@@ -68,16 +69,16 @@ public class MainActivity extends Activity
 		}
 		else
 		{
-			mFAB.setLayout(menuLayout);
-			mFAB.setOverlayLayout(overlayLayout);
-			mFAB.setBottomThreshold(50);
-			mFAB.setImageDrawable(getResources().getDrawable(R.drawable.selector_fab_button_main));
+			mFAB.setLayout(menuLayout); // Layout for buttons
+//			mFAB.setOverlayLayout(overlayLayout); // if set, hide menu on click.
+			mFAB.setBottomThreshold(150);
+			mFAB.setImageDrawable(getResources().getDrawable(R.drawable.btn_main));
 
 			if(!mFAB.haveActionButtons())
 			{
 				// Button 1
 				final FloatingActionButton button = new FloatingActionButton(getBaseContext());
-				button.setImageDrawable(getResources().getDrawable(R.drawable.selector_fab_button_1));
+				button.setImageDrawable(getResources().getDrawable(R.drawable.btn_1));
 				button.setOnClickListener(new View.OnClickListener()
 				{
 					@Override
@@ -89,7 +90,7 @@ public class MainActivity extends Activity
 
 				// Button 2
 				final FloatingActionButton button2 = new FloatingActionButton(getBaseContext());
-				button2.setImageDrawable(getResources().getDrawable(R.drawable.selector_fab_button_2));
+				button2.setImageDrawable(getResources().getDrawable(R.drawable.btn_2));
 				button2.setOnClickListener(new View.OnClickListener()
 				{
 					@Override
@@ -101,7 +102,7 @@ public class MainActivity extends Activity
 
 				// Button 3
 				final FloatingActionButton button3 = new FloatingActionButton(getBaseContext());
-				button3.setImageDrawable(getResources().getDrawable(R.drawable.selector_fab_button_3));
+				button3.setImageDrawable(getResources().getDrawable(R.drawable.btn_3));
 				button3.setOnClickListener(new View.OnClickListener()
 				{
 					@Override
@@ -113,7 +114,7 @@ public class MainActivity extends Activity
 
 				// Button 4
 				final FloatingActionButton button4 = new FloatingActionButton(getBaseContext());
-				button4.setImageDrawable(getResources().getDrawable(R.drawable.selector_fab_button_4));
+				button4.setImageDrawable(getResources().getDrawable(R.drawable.btn_4));
 				button4.setOnClickListener(new View.OnClickListener()
 				{
 					@Override
