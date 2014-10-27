@@ -16,7 +16,6 @@ import com.melnykov.fab.view.ObservableScrollView;
 
 public class MainActivity extends Activity
 {
-
 	private boolean FAB_AS_BUTTON = false;
 
 
@@ -48,7 +47,6 @@ public class MainActivity extends Activity
 	private void fabInit()
 	{
 		final RelativeLayout menuLayout = (RelativeLayout) findViewById(R.id.fab_menu_layout); // horizontal
-//		final RelativeLayout menuLayout = (RelativeLayout) findViewById(R.id.fab_menu_layout_top); // vertical
 		final RelativeLayout overlayLayout = (RelativeLayout) findViewById(R.id.fab_hide_overlay);
 
 		if(FAB_AS_BUTTON)
@@ -85,8 +83,11 @@ public class MainActivity extends Activity
 					public void onClick(View v)
 					{
 						Log.d("FAB","FAB Button 1 clicked !!!");
+						button.setImageDrawable(getResources().getDrawable(R.drawable.btn_1));
+						button.setShadow(!button.hasShadow());
 					}
 				});
+
 
 				// Button 2
 				final FloatingActionButton button2 = new FloatingActionButton(getBaseContext());
@@ -97,6 +98,7 @@ public class MainActivity extends Activity
 					public void onClick(View v)
 					{
 						Log.d("FAB","FAB Button 2 clicked !!!");
+						button2.setImageDrawable(getResources().getDrawable(R.drawable.btn_1));
 					}
 				});
 

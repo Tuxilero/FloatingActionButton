@@ -201,10 +201,10 @@ public class FloatingActionMenu extends ImageButton implements ObservableScrollV
 		{
 			try
 			{
-				mColorNormal = attr.getColor(R.styleable.FloatingActionButton_fab_colorNormal, getColor(android.R.color.transparent));
-				mColorPressed = attr.getColor(R.styleable.FloatingActionButton_fab_colorPressed, getColor(android.R.color.transparent));
+//				mColorNormal = attr.getColor(R.styleable.FloatingActionButton_fab_colorNormal, getColor(android.R.color.transparent));
+//				mColorPressed = attr.getColor(R.styleable.FloatingActionButton_fab_colorPressed, getColor(android.R.color.transparent));
 				mShadow = attr.getBoolean(R.styleable.FloatingActionButton_fab_shadow, true);
-				mType = attr.getInt(R.styleable.FloatingActionButton_fab_type, TYPE_NORMAL);
+//				mType = attr.getInt(R.styleable.FloatingActionButton_fab_type, TYPE_NORMAL);
 			}
 			finally
 			{
@@ -668,7 +668,7 @@ public class FloatingActionMenu extends ImageButton implements ObservableScrollV
 		AnimatorSet bouncer = new AnimatorSet();
 		for(FloatingActionButton button : mButtonList)
 		{
-			ObjectAnimator anim = ObjectAnimator.ofFloat(button, "translationY", 0);
+			ObjectAnimator anim = ObjectAnimator.ofFloat(button, "translationX", 0);
 			anim.setDuration(TRANSLATE_DURATION_MILLIS);
 			bouncer.play(anim);
 		}

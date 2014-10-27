@@ -1,19 +1,16 @@
 package com.melnykov.fab;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
-import android.graphics.drawable.shapes.OvalShape;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.ColorRes;
 import android.support.annotation.DimenRes;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.widget.ImageButton;
@@ -21,30 +18,20 @@ import android.widget.ImageButton;
 
 public class FloatingActionButton extends ImageButton
 {
-	public static final int TYPE_NORMAL = 0;
-	public static final int TYPE_MINI = 1;
-
-	private int mScrollY;
-	private int mColorNormal;
-	private int mColorPressed;
+	final private int SHADOW_DIVIDE_COEFFICIENT = 7;
 	private boolean mShadow;
-	private int mType;
-
-
-	@IntDef({TYPE_NORMAL, TYPE_MINI})
-	public @interface TYPE
-	{
-	}
+	private int mButtonSize;
+	private Drawable mDrawable = null;
 
 
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
 	{
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		int size = getDimension(mType==TYPE_NORMAL ? R.dimen.fab_size_normal : R.dimen.fab_size_mini);
+		int size = mButtonSize;
 		if(mShadow)
 		{
-			int shadowSize = getDimension(R.dimen.fab_shadow_size);
+			int shadowSize = mButtonSize / SHADOW_DIVIDE_COEFFICIENT;
 			size += shadowSize * 2;
 		}
 		setMeasuredDimension(size, size);
@@ -56,8 +43,8 @@ public class FloatingActionButton extends ImageButton
 	{
 		Parcelable superState = super.onSaveInstanceState();
 		SavedState savedState = new SavedState(superState);
-		savedState.mScrollY = mScrollY;
-
+		savedState.mButtonSize = mButtonSize;
+		savedState.mShadow = mShadow;
 		return savedState;
 	}
 
@@ -68,7 +55,8 @@ public class FloatingActionButton extends ImageButton
 		if(state instanceof SavedState)
 		{
 			SavedState savedState = (SavedState) state;
-			mScrollY = savedState.mScrollY;
+			mButtonSize = savedState.mButtonSize;
+			mShadow = savedState.mShadow;
 			super.onRestoreInstanceState(savedState.getSuperState());
 		}
 		else
@@ -102,14 +90,13 @@ public class FloatingActionButton extends ImageButton
 
 	private void init(Context context, AttributeSet attributeSet)
 	{
-		mColorNormal = getColor(android.R.color.transparent);
-		mColorPressed = getColor(android.R.color.transparent);
-		mType = TYPE_NORMAL;
+		mButtonSize = getDimension(R.dimen.fab_size_normal);
 		mShadow = true;
 		if(attributeSet!=null)
 		{
 			initAttributes(context, attributeSet);
 		}
+		setScaleType(ScaleType.FIT_XY);
 		updateBackground();
 	}
 
@@ -121,10 +108,8 @@ public class FloatingActionButton extends ImageButton
 		{
 			try
 			{
-				mColorNormal = attr.getColor(R.styleable.FloatingActionButton_fab_colorNormal, getColor(android.R.color.transparent));
-				mColorPressed = attr.getColor(R.styleable.FloatingActionButton_fab_colorPressed, getColor(android.R.color.transparent));
 				mShadow = attr.getBoolean(R.styleable.FloatingActionButton_fab_shadow, true);
-				mType = attr.getInt(R.styleable.FloatingActionButton_fab_type, TYPE_NORMAL);
+				mButtonSize = attr.getInt(R.styleable.FloatingActionButton_fab_type, getDimension(R.dimen.fab_size_normal));
 			}
 			finally
 			{
@@ -134,57 +119,19 @@ public class FloatingActionButton extends ImageButton
 	}
 
 
-	private void updateBackground()
+	public void setImageDrawable(Drawable drawable)
 	{
-		StateListDrawable drawable = new StateListDrawable();
-		drawable.addState(new int[]{android.R.attr.state_pressed}, createDrawable(mColorPressed));
-		drawable.addState(new int[]{}, createDrawable(mColorNormal));
-		setBackgroundCompat(drawable);
-	}
-
-
-	private Drawable createDrawable(int color)
-	{
-		OvalShape ovalShape = new OvalShape();
-		ShapeDrawable shapeDrawable = new ShapeDrawable(ovalShape);
-		shapeDrawable.getPaint().setColor(color);
-
-		if(mShadow)
-		{
-			LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{getResources().getDrawable(R.drawable.shadow), shapeDrawable});
-			int shadowSize = getDimension(mType==TYPE_NORMAL ? R.dimen.fab_shadow_size : R.dimen.fab_mini_shadow_size);
-			layerDrawable.setLayerInset(1, shadowSize, shadowSize, shadowSize, shadowSize);
-			return layerDrawable;
-		}
-		else
-		{
-			return shapeDrawable;
-		}
-	}
-
-
-	private TypedArray getTypedArray(Context context, AttributeSet attributeSet, int[] attr)
-	{
-		return context.obtainStyledAttributes(attributeSet, attr, 0, 0);
-	}
-
-
-	private int getColor(@ColorRes int id)
-	{
-		return getResources().getColor(id);
-	}
-
-
-	private int getDimension(@DimenRes int id)
-	{
-		return getResources().getDimensionPixelSize(id);
+		mDrawable = drawable;
+		updateBackground();
 	}
 
 
 	@SuppressWarnings("deprecation")
-	@SuppressLint("NewApi")
-	private void setBackgroundCompat(Drawable drawable)
+	public void updateBackground()
 	{
+		StateListDrawable drawable = new StateListDrawable();
+		drawable.addState(new int[]{android.R.attr.state_pressed}, createDrawable(mDrawable));
+		drawable.addState(new int[]{}, createDrawable(mDrawable));
 		if(Build.VERSION.SDK_INT>=16)
 		{
 			setBackground(drawable);
@@ -196,51 +143,33 @@ public class FloatingActionButton extends ImageButton
 	}
 
 
-	public void setColorNormal(int color)
+	private Drawable createDrawable(Drawable drawable)
 	{
-		if(color!=mColorNormal)
+		if(drawable==null) drawable = new ColorDrawable(Color.TRANSPARENT);
+
+		if(mShadow)
 		{
-			mColorNormal = color;
-			updateBackground();
+			LayerDrawable layerDrawable = new LayerDrawable(new Drawable[]{getResources().getDrawable(R.drawable.shadow), drawable});
+			int shadowSize = mButtonSize / SHADOW_DIVIDE_COEFFICIENT;
+			layerDrawable.setLayerInset(1, shadowSize, shadowSize, shadowSize, shadowSize);
+			return layerDrawable;
+		}
+		else
+		{
+			return drawable;
 		}
 	}
 
 
-	@SuppressWarnings("unused")
-	public void setColorNormalResId(@ColorRes int colorResId)
+	private TypedArray getTypedArray(Context context, AttributeSet attributeSet, int[] attr)
 	{
-		setColorNormal(getColor(colorResId));
+		return context.obtainStyledAttributes(attributeSet, attr, 0, 0);
 	}
 
 
-	@SuppressWarnings("unused")
-	public int getColorNormal()
+	private int getDimension(@DimenRes int id)
 	{
-		return mColorNormal;
-	}
-
-
-	public void setColorPressed(int color)
-	{
-		if(color!=mColorPressed)
-		{
-			mColorPressed = color;
-			updateBackground();
-		}
-	}
-
-
-	@SuppressWarnings("unused")
-	public void setColorPressedResId(@ColorRes int colorResId)
-	{
-		setColorPressed(getColor(colorResId));
-	}
-
-
-	@SuppressWarnings("unused")
-	public int getColorPressed()
-	{
-		return mColorPressed;
+		return getResources().getDimensionPixelSize(id);
 	}
 
 
@@ -263,32 +192,27 @@ public class FloatingActionButton extends ImageButton
 
 
 	@SuppressWarnings("unused")
-	public void setType(@TYPE int type)
+	public void setButtonSize(int size)
 	{
-		if(type!=mType)
+		if(size!=mButtonSize)
 		{
-			mType = type;
+			mButtonSize = size;
 			updateBackground();
 		}
 	}
 
 
-	@TYPE
 	@SuppressWarnings("unused")
-	public int getType()
+	public int getButtonSize()
 	{
-		return mType;
+		return mButtonSize;
 	}
 
 
-	/**
-	 * A {@link android.os.Parcelable} representing the {@link com.melnykov.fab.FloatingActionButton}'s
-	 * state.
-	 */
 	public static class SavedState extends BaseSavedState
 	{
-
-		private int mScrollY;
+		private int mButtonSize;
+		private boolean mShadow;
 
 
 		public SavedState(Parcelable parcel)
@@ -300,7 +224,8 @@ public class FloatingActionButton extends ImageButton
 		private SavedState(Parcel in)
 		{
 			super(in);
-			mScrollY = in.readInt();
+			mButtonSize = in.readInt();
+			mShadow = in.readByte()!=0;
 		}
 
 
@@ -308,7 +233,8 @@ public class FloatingActionButton extends ImageButton
 		public void writeToParcel(@NonNull Parcel out, int flags)
 		{
 			super.writeToParcel(out, flags);
-			out.writeInt(mScrollY);
+			out.writeInt(mButtonSize);
+			out.writeByte((byte) (mShadow ? 1 : 0));
 		}
 
 

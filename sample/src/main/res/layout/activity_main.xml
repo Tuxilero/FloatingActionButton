@@ -126,18 +126,6 @@
 		<RelativeLayout
 			android:id="@+id/fab_menu_layout"
 			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="horizontal"
-			android:layout_alignParentBottom="true"
-			android:layout_alignParentRight="true"
-			android:layout_alignParentEnd="true"
-			android:layout_margin="16dp"
-			android:visibility="gone"/>
-
-		<!--vertical button layout-->
-		<RelativeLayout
-			android:id="@+id/fab_menu_layout_top"
-			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:orientation="horizontal"
 			android:layout_alignParentBottom="true"
