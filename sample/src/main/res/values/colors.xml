@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#009688</color>
-    <color name="primary_pressed">#26a69a</color>
+	<color name="primary">#009688</color>
+	<color name="primary_pressed">#26a69a</color>
+
+	<color name="button1">#009600</color>
+	<color name="button1_pressed">#26a600</color>
+
+	<color name="button2">#000088</color>
+	<color name="button2_pressed">#26009a</color>
+
+	<color name="button3">#990088</color>
+	<color name="button3_pressed">#9900ba</color>
+
+	<color name="button4">#999688</color>
+	<color name="button4_pressed">#99a69a</color>
 </resources>
