@@ -15,7 +15,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.RelativeLayout;
 
-
 import com.melnykov.fab.view.ObservableScrollView;
 
 import java.util.ArrayList;
@@ -94,15 +93,16 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 		}
 		mCurrentScrollY = scrollY;
 
-		if(!mAnimating) positionButton(false);
+		if(!mAnimating) positionButton(false, false);
 	}
 
 
-	private void positionButton(boolean animating)
+	private void positionButton(boolean animating, boolean once)
 	{
 		if(mAnimating) return;
-		if(mMaxScrollY - mCurrentScrollY<mBottomThreshold) setBottomOffset((mMaxScrollY - mCurrentScrollY - mBottomThreshold), animating);
-		else setBottomOffset(0, animating);
+		if(mMaxScrollY - mCurrentScrollY<mBottomThreshold)
+			setBottomOffset((mMaxScrollY - mCurrentScrollY - mBottomThreshold), animating, once);
+		else setBottomOffset(0, animating, once);
 	}
 
 
@@ -169,8 +169,12 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 			@Override
 			public void onGlobalLayout()
 			{
-				mMaxScrollY = mObservableScrollView.computeVerticalScrollRange() - mObservableScrollView.getHeight();
-				positionButton(true);
+				int tmp = mObservableScrollView.computeVerticalScrollRange() - mObservableScrollView.getHeight();
+				if(mMaxScrollY==tmp) return;
+
+				mMaxScrollY = tmp;
+
+				positionButton(true, false);
 			}
 		});
 		setVisibility(GONE);
@@ -186,7 +190,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 	}
 
 
-	public void setBottomOffset(int offset, boolean animate)
+	public void setBottomOffset(int offset, boolean animate, final boolean once)
 	{
 		mCurrentBottomOffset = offset;
 
@@ -216,7 +220,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 				public void onAnimationEnd(Animator animation)
 				{
 					mAnimating = false;
-					positionButton(true);
+					if(!once) positionButton(true, true);
 				}
 
 
@@ -225,6 +229,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 				{
 				}
 			});
+
 		}
 		else setTranslationY(mBottomOffset + offset + toastOffset);
 
@@ -232,6 +237,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 		{
 			mAnimating = true;
 			ViewPropertyAnimator anim = mLayout.animate().setInterpolator(mInterpolator).setDuration(mAnimationDuration).translationY(mBottomOffset + offset + toastOffset);
+
 			anim.setListener(new Animator.AnimatorListener()
 			{
 
@@ -276,7 +282,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 		if(!mBottomPaddingList.containsKey(tag)) mBottomPaddingList.put(tag, padding);
 		else if(mBottomPaddingList.get(tag)<padding) mBottomPaddingList.put(tag, padding);
 
-		positionButton(true);
+		positionButton(true, false);
 	}
 
 
@@ -285,7 +291,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 	{
 		mBottomPaddingList.remove(tag);
 
-		positionButton(true);
+		positionButton(true, false);
 	}
 
 
@@ -394,7 +400,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 			public void onAnimationEnd(Animator animation)
 			{
 				mAnimating = false;
-				positionButton(true);
+				positionButton(true, false);
 			}
 
 
@@ -453,7 +459,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 				mLayout.setVisibility(GONE);
 				setVisibility(VISIBLE);
 				mAnimating = false;
-				positionButton(true);
+				positionButton(true, false);
 			}
 
 
