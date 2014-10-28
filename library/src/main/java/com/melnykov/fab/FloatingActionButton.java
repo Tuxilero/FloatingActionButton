@@ -1,7 +1,6 @@
 package com.melnykov.fab;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -22,6 +21,22 @@ public class FloatingActionButton extends ImageButton
 	private boolean mShadow;
 	private int mButtonSize;
 	private Drawable mDrawable = null;
+
+
+	public FloatingActionButton(Context context)
+	{
+		this(context, null);
+	}
+
+
+	public FloatingActionButton(Context context, AttributeSet attrs)
+	{
+		super(context, attrs);
+		mButtonSize = getDimension(R.dimen.fab_size_normal);
+		mShadow = true;
+		setScaleType(ScaleType.FIT_XY);
+		updateBackground();
+	}
 
 
 	@Override
@@ -66,59 +81,6 @@ public class FloatingActionButton extends ImageButton
 	}
 
 
-	@SuppressWarnings("unused")
-	public FloatingActionButton(Context context)
-	{
-		this(context, null);
-	}
-
-
-	public FloatingActionButton(Context context, AttributeSet attrs)
-	{
-		super(context, attrs);
-		init(context, attrs);
-	}
-
-
-	@SuppressWarnings("unused")
-	public FloatingActionButton(Context context, AttributeSet attrs, int defStyle)
-	{
-		super(context, attrs, defStyle);
-		init(context, attrs);
-	}
-
-
-	private void init(Context context, AttributeSet attributeSet)
-	{
-		mButtonSize = getDimension(R.dimen.fab_size_normal);
-		mShadow = true;
-		if(attributeSet!=null)
-		{
-			initAttributes(context, attributeSet);
-		}
-		setScaleType(ScaleType.FIT_XY);
-		updateBackground();
-	}
-
-
-	private void initAttributes(Context context, AttributeSet attributeSet)
-	{
-		TypedArray attr = getTypedArray(context, attributeSet, R.styleable.FloatingActionButton);
-		if(attr!=null)
-		{
-			try
-			{
-				mShadow = attr.getBoolean(R.styleable.FloatingActionButton_fab_shadow, true);
-				mButtonSize = attr.getInt(R.styleable.FloatingActionButton_fab_type, getDimension(R.dimen.fab_size_normal));
-			}
-			finally
-			{
-				attr.recycle();
-			}
-		}
-	}
-
-
 	public void setImageDrawable(Drawable drawable)
 	{
 		mDrawable = drawable;
@@ -158,12 +120,6 @@ public class FloatingActionButton extends ImageButton
 		{
 			return drawable;
 		}
-	}
-
-
-	private TypedArray getTypedArray(Context context, AttributeSet attributeSet, int[] attr)
-	{
-		return context.obtainStyledAttributes(attributeSet, attr, 0, 0);
 	}
 
 

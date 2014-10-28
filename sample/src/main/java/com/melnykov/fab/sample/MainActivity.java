@@ -18,43 +18,33 @@ public class MainActivity extends Activity
 {
 	private boolean FAB_AS_BUTTON = false;
 
-
-	private FloatingActionMenu mFAB = null;
-
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		final ObservableScrollView scrollView = (ObservableScrollView) findViewById(R.id.container_content);
 
-		if(mFAB==null) mFAB = (FloatingActionMenu) findViewById(R.id.fab);
+		FloatingActionMenu FAB = (FloatingActionMenu) findViewById(R.id.fab);
 
-//		ListView listView = new ListView(this);
-//		ListAdapter listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.planets));
-//		listView.setAdapter(listAdapter);
-
-//		scrollView.addView(listView);
-
-		fabInit();
-
-		if(mFAB!=null) mFAB.attachToView(scrollView);
+		fabInit(FAB);
 	}
 
 
-	private void fabInit()
+	private void fabInit(FloatingActionMenu FAB)
 	{
+		if(FAB == null) return;
+
 		final RelativeLayout menuLayout = (RelativeLayout) findViewById(R.id.fab_menu_layout); // horizontal
 		final RelativeLayout overlayLayout = (RelativeLayout) findViewById(R.id.fab_hide_overlay);
+		final ObservableScrollView scrollView = (ObservableScrollView) findViewById(R.id.container_content);
 
 		if(FAB_AS_BUTTON)
 		{
-			mFAB.setLayout(menuLayout);
-			mFAB.setImageDrawable(getResources().getDrawable(R.drawable.btn_main));
+			FAB.setLayout(menuLayout);
+			FAB.setImageDrawable(getResources().getDrawable(R.drawable.btn_main));
 
-			mFAB.setOnClickListener(new View.OnClickListener()
+			FAB.setOnClickListener(new View.OnClickListener()
 			{
 				@Override
 				public void onClick(View v)
@@ -63,16 +53,18 @@ public class MainActivity extends Activity
 				}
 			});
 
-			mFAB.setVisible(false);
+			FAB.setVisible(false);
+
+			FAB.attachToView(scrollView);
 		}
 		else
 		{
-			mFAB.setLayout(menuLayout); // Layout for buttons
-//			mFAB.setOverlayLayout(overlayLayout); // if set, hide menu on click.
-			mFAB.setBottomThreshold(150);
-			mFAB.setImageDrawable(getResources().getDrawable(R.drawable.btn_main));
+			FAB.setLayout(menuLayout); // Layout for buttons
+//			FAB.setOverlayLayout(overlayLayout); // if set, hide menu on click.
+			FAB.setBottomThreshold(150);
+			FAB.setImageDrawable(getResources().getDrawable(R.drawable.btn_main));
 
-			if(!mFAB.haveActionButtons())
+			if(!FAB.haveActionButtons())
 			{
 				// Button 1
 				final FloatingActionButton button = new FloatingActionButton(getBaseContext());
@@ -126,13 +118,16 @@ public class MainActivity extends Activity
 					}
 				});
 
-				mFAB.addActionButton(button4);
-				mFAB.addActionButton(button3);
-				mFAB.addActionButton(button2);
-				mFAB.addActionButton(button);
+				FAB.addActionButton(button4);
+				FAB.addActionButton(button3);
+				FAB.addActionButton(button2);
+				FAB.addActionButton(button);
 			}
 
-			mFAB.setVisible(false);
+			FAB.setVisible(false);
+
+			FAB.attachToView(scrollView);
+			FAB.setVertical(true);
 		}
 	}
 }

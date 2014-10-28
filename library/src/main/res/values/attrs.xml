@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <declare-styleable name="FloatingActionButton">
-        <attr name="fab_shadow" format="boolean"/>
-        <attr name="fab_type" format="integer"/>
-    </declare-styleable>
-</resources>
