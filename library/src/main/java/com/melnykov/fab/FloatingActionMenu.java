@@ -15,6 +15,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.RelativeLayout;
 
+
 import com.melnykov.fab.view.ObservableScrollView;
 
 import java.util.ArrayList;
@@ -52,33 +53,6 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 
 	// etc
 	private boolean mVerticalMenu = false;
-	private Animator.AnimatorListener mAnimationEndListener = new Animator.AnimatorListener()
-	{
-
-		@Override
-		public void onAnimationStart(Animator animation)
-		{
-		}
-
-
-		@Override
-		public void onAnimationRepeat(Animator animation)
-		{
-		}
-
-
-		@Override
-		public void onAnimationEnd(Animator animation)
-		{
-			mAnimating = false;
-		}
-
-
-		@Override
-		public void onAnimationCancel(Animator animation)
-		{
-		}
-	};
 
 
 	@SuppressWarnings("unused")
@@ -126,6 +100,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 
 	private void positionButton(boolean animating)
 	{
+		if(mAnimating) return;
 		if(mMaxScrollY - mCurrentScrollY<mBottomThreshold) setBottomOffset((mMaxScrollY - mCurrentScrollY - mBottomThreshold), animating);
 		else setBottomOffset(0, animating);
 	}
@@ -222,7 +197,34 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 		{
 			mAnimating = true;
 			ViewPropertyAnimator anim = animate().setInterpolator(mInterpolator).setDuration(mAnimationDuration).translationY(mBottomOffset + offset + toastOffset);
-			anim.setListener(mAnimationEndListener);
+			anim.setListener(new Animator.AnimatorListener()
+			{
+
+				@Override
+				public void onAnimationStart(Animator animation)
+				{
+				}
+
+
+				@Override
+				public void onAnimationRepeat(Animator animation)
+				{
+				}
+
+
+				@Override
+				public void onAnimationEnd(Animator animation)
+				{
+					mAnimating = false;
+					positionButton(true);
+				}
+
+
+				@Override
+				public void onAnimationCancel(Animator animation)
+				{
+				}
+			});
 		}
 		else setTranslationY(mBottomOffset + offset + toastOffset);
 
@@ -230,7 +232,33 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 		{
 			mAnimating = true;
 			ViewPropertyAnimator anim = mLayout.animate().setInterpolator(mInterpolator).setDuration(mAnimationDuration).translationY(mBottomOffset + offset + toastOffset);
-			anim.setListener(mAnimationEndListener);
+			anim.setListener(new Animator.AnimatorListener()
+			{
+
+				@Override
+				public void onAnimationStart(Animator animation)
+				{
+				}
+
+
+				@Override
+				public void onAnimationRepeat(Animator animation)
+				{
+				}
+
+
+				@Override
+				public void onAnimationEnd(Animator animation)
+				{
+					mAnimating = false;
+				}
+
+
+				@Override
+				public void onAnimationCancel(Animator animation)
+				{
+				}
+			});
 		}
 		else mLayout.setTranslationY(mBottomOffset + offset + toastOffset);
 	}
@@ -347,7 +375,34 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 		}
 
 
-		menuRollup.addListener(mAnimationEndListener);
+		menuRollup.addListener(new Animator.AnimatorListener()
+		{
+
+			@Override
+			public void onAnimationStart(Animator animation)
+			{
+			}
+
+
+			@Override
+			public void onAnimationRepeat(Animator animation)
+			{
+			}
+
+
+			@Override
+			public void onAnimationEnd(Animator animation)
+			{
+				mAnimating = false;
+				positionButton(true);
+			}
+
+
+			@Override
+			public void onAnimationCancel(Animator animation)
+			{
+			}
+		});
 		menuRollup.start();
 	}
 
@@ -398,6 +453,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 				mLayout.setVisibility(GONE);
 				setVisibility(VISIBLE);
 				mAnimating = false;
+				positionButton(true);
 			}
 
 
