@@ -52,6 +52,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 
 	// etc
 	private boolean mVerticalMenu = false;
+	private boolean mVisible = true;
 
 
 	@SuppressWarnings("unused")
@@ -73,7 +74,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 	@Override
 	public void onScrollChanged(int scrollY)
 	{
-		if(getVisibility()==GONE && (mLayout==null || mLayout.getVisibility()==GONE)) return;
+		if(getVisibility()==GONE && (mLayout==null || mLayout.getVisibility()==GONE || mLayout.getVisibility()==INVISIBLE)) return;
 
 		if(scrollY==mCurrentScrollY) return;
 
@@ -178,7 +179,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 			}
 		});
 		setVisibility(GONE);
-		setVisibility(VISIBLE);
+		if(mLayout.getVisibility()!=VISIBLE) setVisibility(VISIBLE);
 	}
 
 
@@ -186,7 +187,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 	public void setLayout(@NonNull RelativeLayout layout)
 	{
 		mLayout = layout;
-		mLayout.setVisibility(GONE);
+		mLayout.setVisibility(INVISIBLE);
 	}
 
 
@@ -351,7 +352,8 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 
 		if(mVerticalMenu)
 		{
-			int height = mObservableScrollView.getHeight() - getMarginBottom() * 2 - maxBottomPadding().intValue() + mCurrentBottomOffset - getHeight();
+			//			int height = mObservableScrollView.getHeight() - getMarginBottom() * 2 - maxBottomPadding().intValue() + mCurrentBottomOffset - getHeight();
+			int height = mLayout.getHeight() - maxBottomPadding().intValue() + mCurrentBottomOffset - getHeight();
 
 			int position;
 			if(mButtonList.size()==0) position = 0;
@@ -366,7 +368,8 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 		}
 		else
 		{
-			int width = mObservableScrollView.getWidth() - getMarginRight() * 2 - getWidth();
+			//			int width = mObservableScrollView.getWidth() - getMarginRight() * 2 - getWidth();
+			int width = mLayout.getWidth() - getWidth();
 
 			int position;
 			if(mButtonList.size()==0) position = 0;
@@ -417,7 +420,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 	{
 		if(mAnimating) return;
 
-		if(mLayout.getVisibility()==GONE) return;
+		if(mLayout.getVisibility()==GONE || mLayout.getVisibility()==INVISIBLE) return;
 
 		mAnimating = true;
 
@@ -456,8 +459,8 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 			@Override
 			public void onAnimationEnd(Animator animation)
 			{
-				mLayout.setVisibility(GONE);
-				setVisibility(VISIBLE);
+				mLayout.setVisibility(INVISIBLE);
+				if(mVisible) setVisibility(VISIBLE);
 				mAnimating = false;
 				positionButton(true, false);
 			}
@@ -476,20 +479,15 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 	@SuppressWarnings("unused")
 	public void setVisible(boolean visible)
 	{
+		mVisible = visible;
 		if(visible)
 		{
-			if(mLayout.getVisibility()!=VISIBLE)
-			{
-				setVisibility(VISIBLE);
-			}
-			else
-			{
-				setVisibility(GONE);
-			}
+			if(mLayout.getVisibility()!=VISIBLE) setVisibility(VISIBLE);
 		}
 		else
 		{
 			setVisibility(GONE);
+			mLayout.setVisibility(INVISIBLE);
 		}
 	}
 

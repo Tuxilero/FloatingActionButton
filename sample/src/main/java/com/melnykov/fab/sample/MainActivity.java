@@ -36,7 +36,6 @@ public class MainActivity extends Activity
 		if(FAB == null) return;
 
 		final RelativeLayout menuLayout = (RelativeLayout) findViewById(R.id.fab_menu_layout); // horizontal
-		final RelativeLayout overlayLayout = (RelativeLayout) findViewById(R.id.fab_hide_overlay);
 		final ObservableScrollView scrollView = (ObservableScrollView) findViewById(R.id.container_content);
 
 		if(FAB_AS_BUTTON)
@@ -53,14 +52,12 @@ public class MainActivity extends Activity
 				}
 			});
 
-			FAB.setVisible(false);
-
 			FAB.attachToView(scrollView);
 		}
 		else
 		{
 			FAB.setLayout(menuLayout); // Layout for buttons
-//			FAB.setOverlayLayout(overlayLayout); // if set, hide menu on click.
+			FAB.closeMenuOnTouch(false);
 			FAB.setBottomThreshold(150);
 			FAB.setImageDrawable(getResources().getDrawable(R.drawable.btn_main));
 
@@ -123,8 +120,6 @@ public class MainActivity extends Activity
 				FAB.addActionButton(button2);
 				FAB.addActionButton(button);
 			}
-
-			FAB.setVisible(false);
 
 			FAB.attachToView(scrollView);
 			FAB.setVertical(true);
