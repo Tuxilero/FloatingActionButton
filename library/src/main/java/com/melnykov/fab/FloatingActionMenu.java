@@ -161,21 +161,15 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 			@Override
 			public void onGlobalLayout()
 			{
-				onScrollChanged(mObservableScrollView.getScrollY());
-			}
-		});
-
-		mObservableScrollView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener()
-		{
-			@Override
-			public void onGlobalLayout()
-			{
 				int tmp = mObservableScrollView.computeVerticalScrollRange() - mObservableScrollView.getHeight();
 				if(mMaxScrollY==tmp) return;
 
+				mCurrentScrollY = mObservableScrollView.getScrollY();
 				mMaxScrollY = tmp;
 
 				positionButton(true, false);
+				
+				onScrollChanged(mObservableScrollView.getScrollY());
 			}
 		});
 		setVisibility(GONE);
