@@ -21,6 +21,87 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+ * 	Important:
+ * 	For making this all work, you need to set layout correctly. Basically you need something like this:
+ *
+ * 	<RelativeLayout>
+ *	    <com.melnykov.fab.view.ObservableScrollView>
+ * 	        ...
+ * 	    </com.melnykov.fab.view.ObservableScrollView>
+ *
+ *		<!-- Menu Layout. Make sure you have it match_parent, and in correct layout -->
+ *		<!-- so it cant cover whole screen. -->
+ *		<RelativeLayout
+ * 			android:id="@+id/fab_menu_layout"
+ *			android:layout_width="match_parent"
+ *			android:layout_height="match_parent"
+ *			android:layout_margin="16dp"
+ *			android:visibility="gone"/>
+ *
+ *		<!-- FAB -->
+ *		<com.melnykov.fab.FloatingActionMenu
+ *			android:id="@+id/fab"
+ *			android:layout_width="wrap_content"
+ *			android:layout_height="wrap_content"
+ *			android:layout_alignParentBottom="true"
+ *			android:layout_alignParentRight="true"
+ *			android:layout_alignParentEnd="true"
+ *			android:layout_margin="16dp"/>
+ *	</RelativeLayout>
+ *
+ *
+ *	1)	If you want FAB act as button rewrite setOnClickListener.
+ *		If you leave it as it is it will call openMenu() in onClick()
+ *
+ *	2)	After you create your FAB, you have to attach it to observable scrollView.
+ *		You have to use method attachToView(ObservableScrollView) to do this.
+ *
+ *	3)	Menu buttons are displayed in RelativeLayout. So you have to create one.
+ *		After that you can attach the layout with attachToView();
+ *
+ *	4)	There are two interesting methods:
+ *		a) 	setBottomThreshold(pixelSize): This set the bottom threshold on which
+ *			button stop scrolling and start to move up. This is for projects
+ *			where you have some bottom panel, and you don't want FAB to cover it up.
+ *
+ *		b) 	addBottomPadding(pixelSize, stringTag): With this, you can set
+ *			bottom padding of the button. You set it with a tag, so you can easily remove it later.
+ *			FAB use max bottom padding from mBottomPaddingList. Usable when you need to set more
+ *			bottom padding's. For example: you click on something, and bottom panel shows up.
+ *			You add some bottom padding so FAB stay above it. After that you need to display some SnackBar
+ *			which is taller than the panel, so you just add padding for SnackBar height, with another tag.
+ *			After SnackBar disappear, you easily remove bottom padding with	removeBottomPadding(stringTag),
+ *			and FAB return just above the panel that left in mBottomPaddingList.
+ *
+ *		c)	removeBottomPadding(stringTag): Mentioned above.
+ *
+ *		NOTE: I don't recommend use BottomThreshold or BottomPadding with vertical menu
+ *		as it is not implemented yet, and will occur in graphical glitches.
+ *
+ *	5)	When you want to add some button to menu, just create FloatingActionButton, and add it to menu
+ *		using addActionButton(FloatingActionButton).
+ *
+ *	6)	If you need access one of the menu button for example when you need to change button icon,
+ *		You can get all the buttons with getActionButtonList().
+ *
+ *	7)	You can manually open or close menu with openMenu() and closeMenu().
+ *
+ *	8)	You can set your own animation duration with setAnimationDuration(int)
+ *		and get current duration with getAnimationDuration().
+ *
+ *	9)	In special cases you can need not horizontal, but vertical menu. To achieve this
+ *		just set setVertical(boolean). There is also isVertical().
+ *
+ *	10)	For menu closing there are two variants:
+ *		a)	In case you closing menu on scroll you may need setScrollThresholdForMenuClose(int) which
+ *			set the pixelSize you need to scroll for menu to close. you can get current ScrollThreshold with
+ *			getScrollThresholdForMenuClose().
+ *
+ *		b)	Sometime you will need to close menu just on touch.
+ *			You can do it just by setting closeMenuOnTouch(boolean).
+ */
+
 
 public class FloatingActionMenu extends FloatingActionButton implements ObservableScrollView.Callbacks, View.OnClickListener
 {
@@ -46,7 +127,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 	private ArrayList<FloatingActionButton> mButtonList = new ArrayList<FloatingActionButton>();
 
 	// animation
-	private int mAnimationDuration = 250;
+	private int mAnimationDuration = 100;
 	private boolean mAnimating = false;
 	private final Interpolator mInterpolator = new AccelerateDecelerateInterpolator();
 
@@ -126,6 +207,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 	}
 
 
+	@SuppressWarnings("unused")
 	private int getMarginBottom()
 	{
 		int marginBottom = 0;
@@ -138,6 +220,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 	}
 
 
+	@SuppressWarnings("unused")
 	private int getMarginRight()
 	{
 		int marginRight = 0;
@@ -168,7 +251,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 				mMaxScrollY = tmp;
 
 				positionButton(true, false);
-				
+
 				onScrollChanged(mObservableScrollView.getScrollY());
 			}
 		});
@@ -185,7 +268,7 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 	}
 
 
-	public void setBottomOffset(int offset, boolean animate, final boolean once)
+	private void setBottomOffset(int offset, boolean animate, final boolean once)
 	{
 		mCurrentBottomOffset = offset;
 
@@ -286,7 +369,14 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 	{
 		mBottomPaddingList.remove(tag);
 
-		positionButton(true, false);
+		postDelayed(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				positionButton(true, false);
+			}
+		}, 10);
 	}
 
 
@@ -316,6 +406,13 @@ public class FloatingActionMenu extends FloatingActionButton implements Observab
 		button.setLayoutParams(params);
 		mButtonList.add(button);
 		mLayout.addView(button);
+	}
+
+
+	@SuppressWarnings("unused")
+	public ArrayList<FloatingActionButton> getActionButtonList()
+	{
+		return mButtonList;
 	}
 
 

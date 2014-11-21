@@ -4,10 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.melnykov.fab.FloatingActionButton;
 import com.melnykov.fab.FloatingActionMenu;
@@ -17,6 +15,8 @@ import com.melnykov.fab.view.ObservableScrollView;
 public class MainActivity extends Activity
 {
 	private boolean FAB_AS_BUTTON = false;
+	private boolean FAB_HIDE_ON_TOUCH = false;
+	private boolean FAB_VERTICAL = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -24,19 +24,18 @@ public class MainActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-
 		FloatingActionMenu FAB = (FloatingActionMenu) findViewById(R.id.fab);
 
 		fabInit(FAB);
 	}
 
 
-	private void fabInit(FloatingActionMenu FAB)
+	private void fabInit(final FloatingActionMenu FAB)
 	{
 		if(FAB == null) return;
 
 		final RelativeLayout menuLayout = (RelativeLayout) findViewById(R.id.fab_menu_layout); // horizontal
-		final ObservableScrollView scrollView = (ObservableScrollView) findViewById(R.id.container_content);
+		final ObservableScrollView scrollView = (ObservableScrollView) findViewById(R.id.observable_scrollview);
 
 		if(FAB_AS_BUTTON)
 		{
@@ -48,7 +47,7 @@ public class MainActivity extends Activity
 				@Override
 				public void onClick(View v)
 				{
-					Log.d("FAB","FAB Button clicked !!!");
+					Toast.makeText(getBaseContext(),"Button clicked",Toast.LENGTH_LONG).show();
 				}
 			});
 
@@ -57,8 +56,6 @@ public class MainActivity extends Activity
 		else
 		{
 			FAB.setLayout(menuLayout); // Layout for buttons
-			FAB.closeMenuOnTouch(false);
-			FAB.setBottomThreshold(150);
 			FAB.setImageDrawable(getResources().getDrawable(R.drawable.btn_main));
 
 			if(!FAB.haveActionButtons())
@@ -71,9 +68,8 @@ public class MainActivity extends Activity
 					@Override
 					public void onClick(View v)
 					{
-						Log.d("FAB","FAB Button 1 clicked !!!");
-						button.setImageDrawable(getResources().getDrawable(R.drawable.btn_1));
-						button.setShadow(!button.hasShadow());
+						Log.d("FAB", "FAB Button 1 clicked !!!");
+						FAB.addBottomPadding(100,"TAG");
 					}
 				});
 
@@ -86,8 +82,8 @@ public class MainActivity extends Activity
 					@Override
 					public void onClick(View v)
 					{
-						Log.d("FAB","FAB Button 2 clicked !!!");
-						button2.setImageDrawable(getResources().getDrawable(R.drawable.btn_1));
+						Log.d("FAB", "FAB Button 2 clicked !!!");
+						FAB.removeBottomPadding("TAG");
 					}
 				});
 
@@ -122,7 +118,19 @@ public class MainActivity extends Activity
 			}
 
 			FAB.attachToView(scrollView);
-			FAB.setVertical(true);
+
+			if(FAB_VERTICAL)
+				FAB.setVertical(true);
+			else
+				FAB.setVertical(false);
+
+			if(FAB_HIDE_ON_TOUCH)
+				FAB.closeMenuOnTouch(true);
+			else
+				FAB.closeMenuOnTouch(false);
+
+			FAB.setScrollThresholdForMenuClose(50);
+			FAB.setBottomThreshold(200);
 		}
 	}
 }

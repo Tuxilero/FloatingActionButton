@@ -12,7 +12,7 @@
 		android:layout_height="match_parent">
 
 		<com.melnykov.fab.view.ObservableScrollView
-			android:id="@+id/container_content"
+			android:id="@+id/observable_scrollview"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			android:fillViewport="true">
@@ -111,26 +111,45 @@
 					android:layout_height="wrap_content"
 					android:padding="20dp"
 					android:text="TEST TEXT 15"/>
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:padding="20dp"
+					android:text="TEST TEXT 16"/>
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:padding="20dp"
+					android:text="TEST TEXT 17"/>
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:padding="20dp"
+					android:text="TEST TEXT 18"/>
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:padding="20dp"
+					android:text="TEST TEXT 19"/>
+
+				<TextView
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:padding="20dp"
+					android:text="TEST TEXT 20"/>
 			</LinearLayout>
 
 		</com.melnykov.fab.view.ObservableScrollView>
-
-		<!-- FAB hide layout overlay -->
-		<RelativeLayout
-			android:id="@+id/fab_hide_overlay"
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-			android:visibility="gone"/>
 
 		<!-- FAB layout + menuButton -->
 		<RelativeLayout
 			android:id="@+id/fab_menu_layout"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
-			android:orientation="horizontal"
-			android:layout_alignParentBottom="true"
-			android:layout_alignParentRight="true"
-			android:layout_alignParentEnd="true"
 			android:layout_margin="16dp"
 			android:visibility="gone"/>
 
